@@ -1,0 +1,54 @@
+<nav class="post-toc">
+  <strong>Table of Contents</strong>
+  <ul id="toc-list"></ul>
+</nav>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  // adjust this selector to match your post content container
+  const content = document.querySelector('.post-content');
+  const tocList = document.getElementById('toc-list');
+  if (!content || !tocList) return;
+
+  // select all h2 headings (those from '##' in markdown)
+  const headings = content.querySelectorAll('h2');
+  headings.forEach(function(heading) {
+    // skip headings that may be empty or something weird
+    if (!heading.textContent.trim()) return;
+
+    // ensure heading has an id for linking
+    if (!heading.id) {
+      heading.id = heading.textContent.trim().toLowerCase()
+        .replace(/\s+/g, '-')        // spaces → dash
+        .replace(/[^\w\-]+/g, '');   // remove non-word, non-dash chars
+    }
+
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#' + heading.id;
+    a.textContent = heading.textContent;
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+});
+</script>
+
+<style>
+.post-toc {
+  border: 1px solid #ddd;
+  padding: 1em;
+  margin-bottom: 2em;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+.post-toc ul {
+  list-style: none;
+  padding-left: 0;
+}
+.post-toc li {
+  margin: 0.5em 0;
+}
+.post-toc a {
+  text-decoration: none;
+}
+</style>
