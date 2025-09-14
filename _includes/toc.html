@@ -1,0 +1,21 @@
+const headings = content.querySelectorAll('h2, h3');
+
+const content = document.querySelector('.post-content');
+const tocList = document.getElementById('toc-list');
+if (!content) return;
+
+const headings = content.querySelectorAll('h2, h3'); 
+headings.forEach(function(heading) {
+  if (!heading.id) {
+    heading.id = heading.textContent.trim().toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w\-]+/g, '');
+  }
+  const li = document.createElement('li');
+  li.className = 'toc-' + heading.tagName.toLowerCase();
+  const a = document.createElement('a');
+  a.href = '#' + heading.id;
+  a.textContent = heading.textContent;
+  li.appendChild(a);
+  tocList.appendChild(li);
+});
