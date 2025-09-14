@@ -1,0 +1,38 @@
+{% comment %} Generates a Table of Contents for h2-h4 headings, ignoring h1 {% endcomment %}
+{% assign toc = '' %}
+{% assign level = 0 %}
+{% for heading in page.content | split: '<h' %}
+  {% if heading contains '>' %}
+    {% assign hlevel = heading | split: '>' | first | replace: 'h', '' | plus: 0 %}
+    {% if hlevel >= 2 and hlevel <= 4 %}
+      {% assign text = heading | split: '>' | last | split: '<' | first | strip %}
+      {% if text %}
+        {% assign id = heading | split: '"' | first | split: 'id=' | last | strip %}
+        {% if id == '' %}
+          {% assign safe_text = text | downcase | replace: ' ', '-' | replace: '[^a-z0-9\-]', '' %}
+          {% assign id = safe_text %}
+        {% endif %}
+        {% if level == hlevel %}
+          {% assign toc = toc | append: '</li>' %}
+        {% elsif level < hlevel %}
+          {% assign toc = toc | append: '<ul>' %}
+        {% else %}
+          {% for i in (hlevel..level) %}
+            {% assign toc = toc | append: '</ul></li>' %}
+          {% endfor %}
+        {% endif %}
+        {% assign level = hlevel %}
+        {% assign toc = toc | append: '<li><a href="#' | append: id | append: '">' | append: text | append: '</a>' %}
+      {% endif %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+{% for i in (2..level) %}
+  {% assign toc = toc | append: '</ul>' %}
+{% endfor %}
+{% if toc != '' %}
+  <nav class="toc">
+    <h2>Table of Contents</h2>
+    {{ toc }}
+  </nav>
+{% endif %}
